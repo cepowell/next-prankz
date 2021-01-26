@@ -8,10 +8,16 @@ export function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   let title = toTitleCase(params.article.split('-').join(' '))
+  let api = await getRandomAPI();
+  const {name, description} = api;
 
   return {
-    props: { title },
-    revalidate: false,
+    props: {
+      title,
+      name,
+      description
+    },
+    revalidate: 5,
   }
 }
 
@@ -21,6 +27,15 @@ const toTitleCase = (phrase) => {
     .split(' ')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
+}
+
+async function getRandomAPI() {
+  const res = await fetch('https://api.publicapis.org/random');
+  const json = await res.json();
+  return {
+      name: json.entries[0].API,
+      description: json.entries[0].Description,
+  };
 }
 
 export default function Article(props) {
@@ -45,14 +60,12 @@ export default function Article(props) {
         </Link>
         <div className="subhead">You have been pranked - {new Date().toLocaleDateString()}</div>
         <h2>{title} - NOT</h2>
-        <iframe
-          width="560"
-          height="315"
-          src="https://www.youtube.com/embed/dQw4w9WgXcQ?&autoplay=1"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        ></iframe>{' '}
+        <p>Here, have an API instead!</p>
+        <p>
+          {props.name}
+          <br/>
+          {props.description}
+        </p>
         <br />
         <p>
           Wow, you were pranked so good. I bet you wanna get your friends now, too.{` `}

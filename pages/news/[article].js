@@ -17,7 +17,7 @@ export async function getStaticProps({ params }) {
       name,
       description
     },
-    revalidate: 5,
+    revalidate: 30,
   }
 }
 
